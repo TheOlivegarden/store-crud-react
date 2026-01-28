@@ -25,7 +25,7 @@ export default function useProdavnice() {
         }
     }
 
-    async function editProdavnica(prodavnica) {
+    async function editProdavnicu(prodavnica) {
         setLoading(true);
         await updejtujProdavnicu(prodavnica);
         setProdavnice((prev) =>
@@ -34,7 +34,7 @@ export default function useProdavnice() {
         setLoading(false);
     }
 
-    async function deleteProdavnica(id) {
+    async function deleteProdavnicu(id) {
         setLoading(true);
         await izbrisiProdavnicu(id);
         setProdavnice((prev) => prev.filter((p) => p.id !== id));
@@ -56,8 +56,8 @@ export default function useProdavnice() {
         prodavnice,
         loading,
         error,
-        editProdavnica,
-        deleteProdavnica,
+        editProdavnicu,
+        deleteProdavnicu,
         dodajProdavnicu
     };
 }

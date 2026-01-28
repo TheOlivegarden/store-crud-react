@@ -3,7 +3,6 @@ export default function Tabela({ prodavnice }) {
         <table>
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Naziv</th>
                     <th>Adresa</th>
                     <th>Grad</th>
@@ -15,14 +14,13 @@ export default function Tabela({ prodavnice }) {
             <tbody>
                 {prodavnice.map((prodavnica) => (
                     <tr key={prodavnica.id}>
-                        <td>{prodavnica.id}</td>
                         <td>{prodavnica.naziv}</td>
                         <td>{prodavnica.adresa}</td>
                         <td>{prodavnica.grad}</td>
                         <td>{prodavnica.koordinate.lat}, {prodavnica.koordinate.lng}</td>
                         <td>
-                            <button>Izmijeni</button>
-                            <button>Obriši</button>
+                            <button onClick={() => onEdit(prodavnica)} className="text-blue-600 mr-2">Izmijeni</button>
+                            <button onClick={() => onDelete(prodavnica.id)} className="text-red-600">Obriši</button>
                         </td>
                     </tr>
                 ))}

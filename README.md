@@ -48,23 +48,3 @@ src/
 │   └── Stranica.jsx      # Glavna stranica
 └── App.jsx
 ```
-
-## Git Workflow
-
-```bash
-# dev - razvojna grana
-git checkout dev
-git commit -m "poruka"
-git push origin dev
-
-# main - stabilna verzija
-git checkout main
-git pull origin dev
-```
-
-## API Funkcije
-
-getProdavnice()              // Učita sve
-napraviProdavnicu(data)     // Dodaj
-updejtujProdavnicu(data)    // Izmijeni
-izbrisiProdavnicu(id)       // Obriši

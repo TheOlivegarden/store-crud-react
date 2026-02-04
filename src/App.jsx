@@ -1,8 +1,13 @@
 import './App.css'
 import Stranica from './pages/Stranica'
+import { ToastProvider } from './components/ToastProvider'
 
 function App() {
-  return <Stranica />;
+  return (
+    <ToastProvider>
+      <Stranica />
+    </ToastProvider>
+  );
 }
 
 export default App;

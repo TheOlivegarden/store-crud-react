@@ -27,25 +27,46 @@ export default function useProdavnice() {
 
     async function editProdavnicu(prodavnica) {
         setLoading(true);
-        await updejtujProdavnicu(prodavnica);
-        setProdavnice((prev) =>
-            prev.map((p) => (p.id === prodavnica.id ? prodavnica : p))
-        );
-        setLoading(false);
+        try {
+            const updated = await updejtujProdavnicu(prodavnica);
+            setProdavnice((prev) =>
+                prev.map((p) => (p.id === prodavnica.id ? updated : p))
+            );
+            return updated;
+        } catch (err) {
+            setError(err);
+            throw err;
+        } finally {
+            setLoading(false);
+        }
     }
 
     async function deleteProdavnicu(id) {
         setLoading(true);
-        await izbrisiProdavnicu(id);
-        setProdavnice((prev) => prev.filter((p) => p.id !== id));
-        setLoading(false);
+        try {
+            await izbrisiProdavnicu(id);
+            setProdavnice((prev) => prev.filter((p) => p.id !== id));
+            return true;
+        } catch (err) {
+            setError(err);
+            throw err;
+        } finally {
+            setLoading(false);
+        }
     }
 
     async function dodajProdavnicu(prodavnica) {
         setLoading(true);
-        const novaProdavnica = await napraviProdavnicu(prodavnica);
-        setProdavnice((prev) => [...prev, novaProdavnica]);
-        setLoading(false);
+        try {
+            const novaProdavnica = await napraviProdavnicu(prodavnica);
+            setProdavnice((prev) => [...prev, novaProdavnica]);
+            return novaProdavnica;
+        } catch (err) {
+            setError(err);
+            throw err;
+        } finally {
+            setLoading(false);
+        }
     }
 
     useEffect(() => {

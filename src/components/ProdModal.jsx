@@ -136,10 +136,12 @@ export default function ProdModal({
                                 <div className="border rounded" style={{height: "300px"}}>
                                     <Mapa 
                                         selectedCoords={prodavnica.koordinate}
-                                        onSelectCoords={(coords) => {
+                                        onSelectCoords={(coords, adresaP) => {
                                             setProdavnica(prev => ({
                                                 ...prev,
-                                                koordinate: coords
+                                                koordinate: coords,
+                                                adresa: adresaP?.adresa || prev.adresa,
+                                                grad: adresaP?.grad || prev.grad
                                             }));
                                         }}
                                         editMode={true}

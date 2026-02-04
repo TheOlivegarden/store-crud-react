@@ -4,6 +4,7 @@ import Mapa from "../components/Mapa";
 import ProdModal from "../components/ProdModal";
 import useProdavnice from "../hooks/zaProd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useToasts } from "../components/ToastProvider";
 
 function Stranica() {
   const { prodavnice, loading, error, dodajProdavnicu, editProdavnicu, deleteProdavnicu } = useProdavnice();
@@ -23,22 +24,34 @@ function Stranica() {
     setIsModalOpen(true);
   };
 
-  const DeleteKlik = (id) => {
-    if (window.confirm("Sigurno želiš obrisati ovu prodavnicu?")) {
-      deleteProdavnicu(id);
+  const { addToast } = useToasts();
+
+  const DeleteKlik = async (id) => {
+    if (!window.confirm("Sigurno želiš obrisati ovu prodavnicu?")) return;
+    try {
+      await deleteProdavnicu(id);
+      addToast('Prodavnica obrisana.', 'success');
+    } catch (err) {
+      addToast('Greška pri brisanju prodavnice.', 'danger');
     }
   };
 
-  const ModalSubmit = (prodavnica) => {
-    if (editProdavnica?.id) {
-      editProdavnicu({ ...prodavnica, id: editProdavnica.id });
-    } else {
-      dodajProdavnicu(prodavnica);
+  const ModalSubmit = async (prodavnica) => {
+    try {
+      if (editProdavnica?.id) {
+        await editProdavnicu({ ...prodavnica, id: editProdavnica.id });
+        addToast('Prodavnica uspješno ažurirana.', 'success');
+      } else {
+        await dodajProdavnicu(prodavnica);
+        addToast('Prodavnica dodana.', 'success');
+      }
+      setIsModalOpen(false);
+    } catch (err) {
+      addToast('Greška pri spremanju prodavnice.', 'danger');
     }
-    setIsModalOpen(false);
   };
 
-  const KoordinateSel = (koordinate) => {
+  const KoordinateSel = (koordinate, adresaP) => {
     setSelMapKoordinate(koordinate);
   };
 
@@ -71,11 +84,7 @@ function Stranica() {
                 <h5 className="mb-0" style={{color: "#2c3e50"}}>Tabela Prodavnica</h5>
               </div>
               <div className="card-body p-3">
-                <Tabela 
-                  prodavnice={prodavnice}
-                  onEdit={EditKlik} 
-                  onDelete={DeleteKlik}
-                />
+                <Tabela prodavnice={prodavnice}onEdit={EditKlik} onDelete={DeleteKlik} />
               </div>
             </div>
           </div>

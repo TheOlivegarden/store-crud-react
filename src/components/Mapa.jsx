@@ -28,7 +28,29 @@ function MapClickHandler({ onSelectCoords, editMode }) {
     click: (e) => {
       if (editMode) {
         const { lat, lng } = e.latlng;
-        onSelectCoords({ lat: parseFloat(lat.toFixed(4)), lng: parseFloat(lng.toFixed(4)) });
+        const coords = { lat: parseFloat(lat.toFixed(4)), lng: parseFloat(lng.toFixed(4)) };
+
+        (async () => {
+          try {
+            const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${coords.lat}&lon=${coords.lng}`;
+            const res = await fetch(url, {
+              headers: { 'Accept': 'application/json' }
+            });
+            if (res.ok) {
+              const data = await res.json();
+              const addr = data.address || {};
+              const street = [addr.road, addr.house_number].filter(Boolean).join(' ');
+              const suburb = addr.suburb || addr.neighbourhood || '';
+              const fullAddress = [street, suburb].filter(Boolean).join(', ') || data.display_name;
+              const city = addr.city || addr.town || addr.village || addr.county || '';
+              onSelectCoords(coords, { adresa: fullAddress, grad: city, raw: data });
+            } else {
+              onSelectCoords(coords, null);
+            }
+          } catch (err) {
+            onSelectCoords(coords, null);
+          }
+        })();
       }
     }
   });
@@ -48,7 +70,6 @@ function Mapa({
     if (selectedCoords?.lat && selectedCoords?.lng) {
       setCenter([selectedCoords.lat, selectedCoords.lng]);
     } else if (prodavnice.length > 0) {
-      // Auto center on first store if no selection
       const firstStore = prodavnice[0];
       if (firstStore.koordinate?.lat && firstStore.koordinate?.lng) {
         setCenter([firstStore.koordinate.lat, firstStore.koordinate.lng]);
@@ -68,7 +89,6 @@ function Mapa({
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
       
-      {/* Show all store markers */}
       {prodavnice.map((prodavnica) => (
         prodavnica.koordinate?.lat && prodavnica.koordinate?.lng && (
           <Marker 
@@ -106,7 +126,6 @@ function Mapa({
         )
       ))}
       
-      {/* Show selected coordinate marker during edit */}
       {editMode && selectedCoords?.lat && selectedCoords?.lng && !prodavnice.some(p => 
         p.koordinate?.lat === selectedCoords.lat && 
         p.koordinate?.lng === selectedCoords.lng
